@@ -1031,6 +1031,7 @@ class TogglApi
 
             do {
                 $query['page'] = $page;
+                $query['per_page'] = 150;
                 $response = $this->client->get($endpoint, ['query' => $query]);
 
                 $chunkResults = $this->checkResponse($response);
@@ -1038,7 +1039,7 @@ class TogglApi
 
                 $page++;
 
-            } while (count($chunkResults) == 151);
+            } while (count($chunkResults) == 150);
 
             return $results;
 
