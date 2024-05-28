@@ -1025,9 +1025,23 @@ class TogglApi
     private function GET($endpoint, $query = array())
     {
         try {
-            $response = $this->client->get($endpoint, ['query' => $query]);
+            $results = [];
 
-            return $this->checkResponse($response);
+            $page = 1;
+
+            do {
+                $query['page'] = $page;
+                $response = $this->client->get($endpoint, ['query' => $query]);
+
+                $chunkResults = $this->checkResponse($response);
+                $results = array_merge($results, $chunkResults);
+
+                $page++;
+
+            } while (count($chunkResults) == 151);
+
+            return $results;
+
         } catch (ClientException $e) {
             return (object) [
                 'success' => false,
