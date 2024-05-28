@@ -36,7 +36,7 @@ class TogglApi
         $this->apiToken = $apiToken;
         $this->workspaceId = $workspaceId;
         $this->client = new Client([
-           'base_uri' => "https://api.track.toggl.com/api/v9/workspaces/{$this->workspaceId}/",
+           'base_uri' => "https://api.track.toggl.com/api/v9/workspaces/{$this->workspaceId}",
            'auth' => [$this->apiToken, 'api_token'],
        ]);
     }
@@ -568,7 +568,7 @@ class TogglApi
      */
     public function getWorkspaces()
     {
-        return $this->GET('workspaces');
+        return [];
     }
 
     /**
@@ -580,7 +580,7 @@ class TogglApi
      */
     public function getWorkspace($wid)
     {
-        return $this->GET('workspaces/'.$wid);
+        return $this->GET('');
     }
 
     /**
@@ -593,7 +593,7 @@ class TogglApi
      */
     public function updateWorkspace($wid, $workspace)
     {
-        return $this->PUT('workspaces/'.$wid, ['workspace' => $workspace]);
+        return $this->PUT('', ['workspace' => $workspace]);
     }
 
     /**
@@ -1024,6 +1024,9 @@ class TogglApi
      */
     private function GET($endpoint, $query = array())
     {
+        if (!empty($endpoint) && !str_starts_with($endpoint, '/')) {
+            $endpoint = '/' . $endpoint;
+        }
         try {
             $results = [];
 
@@ -1035,11 +1038,15 @@ class TogglApi
                 $response = $this->client->get($endpoint, ['query' => $query]);
 
                 $chunkResults = $this->checkResponse($response);
-                $results = array_merge($results, $chunkResults);
+                if (is_array($chunkResults)) {
+                    $results = array_merge($results, $chunkResults);
+                } else {
+                    $results = $chunkResults;
+                }
 
                 $page++;
 
-            } while (count($chunkResults) == 150);
+            } while (is_array($chunkResults) && count($chunkResults) == 150);
 
             return $results;
 
@@ -1062,8 +1069,11 @@ class TogglApi
      */
     private function POST($endpoint, $body = array(), $query = array())
     {
+        if (!empty($endpoint) && !str_starts_with($endpoint, '/')) {
+            $endpoint = '/' . $endpoint;
+        }
         try {
-            $response = $this->client->post($endpoint, ['body' => json_encode($body), 'query' => $query]);
+            $response = $this->client->post('/' . $endpoint, ['body' => json_encode($body), 'query' => $query]);
 
             return $this->checkResponse($response);
         } catch (ClientException $e) {
@@ -1085,8 +1095,11 @@ class TogglApi
      */
     private function PUT($endpoint, $body = array(), $query = array())
     {
+        if (!empty($endpoint) && !str_starts_with($endpoint, '/')) {
+            $endpoint = '/' . $endpoint;
+        }
         try {
-            $response = $this->client->put($endpoint, ['body' => json_encode($body), 'query' => $query]);
+            $response = $this->client->put('/' . $endpoint, ['body' => json_encode($body), 'query' => $query]);
 
             return $this->checkResponse($response);
         } catch (ClientException $e) {
@@ -1109,7 +1122,7 @@ class TogglApi
     private function DELETE($endpoint, $body = array(), $query = array())
     {
         try {
-            $response = $this->client->delete($endpoint, ['body' => json_encode($body), 'query' => $query]);
+            $response = $this->client->delete('/' . $endpoint, ['body' => json_encode($body), 'query' => $query]);
 
             return $this->checkResponse($response);
         } catch (ClientException $e) {
