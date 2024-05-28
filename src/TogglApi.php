@@ -36,7 +36,7 @@ class TogglApi
         $this->apiToken = $apiToken;
         $this->workspaceId = $workspaceId;
         $this->client = new Client([
-           'base_uri' => 'https://api.track.toggl.com/api/v9/',
+           'base_uri' => "https://api.track.toggl.com/api/v9/workspaces/{$this->workspaceId}/",
            'auth' => [$this->apiToken, 'api_token'],
        ]);
     }
@@ -71,7 +71,7 @@ class TogglApi
      */
     public function createClient($client)
     {
-        return $this->POST("workspaces/{$this->workspaceId}/clients", ['client' => $client]);
+        return $this->POST("clients", ['client' => $client]);
     }
 
     /**
@@ -166,7 +166,7 @@ class TogglApi
      */
     public function getClientById($clientId)
     {
-        return $this->GET("workspaces/{$this->workspaceId}/clients/{$clientId}");
+        return $this->GET("clients/{$clientId}");
     }
 
     /**
@@ -355,7 +355,7 @@ class TogglApi
      */
     public function createProject($project)
     {
-        return $this->POST("workspaces/{$this->workspaceId}/projects", ['project' => $project]);
+        return $this->POST("projects", ['project' => $project]);
     }
 
     /**
@@ -368,7 +368,7 @@ class TogglApi
      */
     public function updateProject($projectId, $project)
     {
-        return $this->PUT("workspaces/{$this->workspaceId}/projects/{$projectId}", ['project' => $project]);
+        return $this->PUT("projects/{$projectId}", ['project' => $project]);
     }
 
     /**
@@ -440,7 +440,7 @@ class TogglApi
      */
     public function getProject($projectId)
     {
-        return $this->GET("workspaces/{$this->workspaceId}/projects/{$projectId}");
+        return $this->GET("projects/{$projectId}");
     }
 
     /**
@@ -605,7 +605,7 @@ class TogglApi
      */
     public function getWorkspaceUsers($wid)
     {
-        return $this->GET('workspaces/'.$wid.'/users');
+        return $this->GET('users');
     }
 
     /**
@@ -617,7 +617,7 @@ class TogglApi
      */
     public function getWorkspaceClients($wid)
     {
-        return $this->GET('workspaces/'.$wid.'/clients');
+        return $this->GET('clients');
     }
 
     /**
@@ -630,7 +630,7 @@ class TogglApi
      */
     public function getWorkspaceProjects($workspaceId, $options = [])
     {
-        return $this->GET("workspaces/{$workspaceId}/projects", $options);
+        return $this->GET("projects", $options);
     }
 
     /**
@@ -643,7 +643,7 @@ class TogglApi
      */
     public function getProjects($options = [])
     {
-        return $this->GET("workspaces/{$this->workspaceId}/projects", $options);
+        return $this->GET("projects", $options);
     }
 
     /**
@@ -656,7 +656,7 @@ class TogglApi
      */
     public function getWorkspaceTasks($wid, $options = [])
     {
-        return $this->GET('workspaces/'.$wid.'/tasks', $options);
+        return $this->GET('tasks', $options);
     }
 
     /**
@@ -668,7 +668,7 @@ class TogglApi
      */
     public function getWorkspaceTags($wid)
     {
-        return $this->GET('workspaces/'.$wid.'/tags');
+        return $this->GET('tags');
     }
 
     /**
@@ -805,7 +805,7 @@ class TogglApi
      */
     public function getTask($projectId, $taskId)
     {
-        return $this->GET("workspaces/{$this->workspaceId}/projects/{$projectId}/tasks/{$taskId}");
+        return $this->GET("projects/{$projectId}/tasks/{$taskId}");
     }
 
     /**
@@ -817,7 +817,7 @@ class TogglApi
      */
     public function createTask($projectId, $task)
     {
-        return $this->POST("workspaces/{$this->workspaceId}/projects/{$projectId}/tasks", ['task' => $task]);
+        return $this->POST("projects/{$projectId}/tasks", ['task' => $task]);
     }
 
     /**
@@ -830,7 +830,7 @@ class TogglApi
      */
     public function updateTask($projectId, $taskId, $task)
     {
-        return $this->PUT("workspaces/{$this->workspaceId}/projects/{$projectId}/tasks/{$taskId}", [
+        return $this->PUT("projects/{$projectId}/tasks/{$taskId}", [
             'task' => $task,
         ]);
     }
@@ -857,7 +857,7 @@ class TogglApi
      */
     public function deleteTask($taskId)
     {
-        return $this->DELETE("workspaces/{$this->workspaceId}/tasks/{$taskId}");
+        return $this->DELETE("tasks/{$taskId}");
     }
 
     /**
